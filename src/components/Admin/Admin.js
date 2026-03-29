@@ -54,19 +54,20 @@ const Admin = ({ onSetupComplete }) => {
   ];
 
   return (
-    <div style={{ display: 'flex', fontFamily: 'Segoe UI, sans-serif', minHeight: '100vh', background: '#0f172a', color: 'white' }}>
+    <div style={{ display: 'flex', gap: '24px' }}>
       
       {/* Sidebar */}
-      <div style={{ width: '220px', background: '#1e293b', padding: '20px', flexShrink: 0 }}>
+      <div className="glass-panel" style={{ width: '240px', padding: '24px', flexShrink: 0, height: 'fit-content', position: 'sticky', top: 100 }}>
         <h2 style={{ color: '#6366f1', marginTop: 0, fontSize: '18px' }}>⚙️ Admin Panel</h2>
         <div style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '20px' }}>
           {company.name} · {company.currency}
         </div>
         {sidebarItems.map(item => (
           <div key={item.id} onClick={() => setCurrentView(item.id)}
-            style={{ padding: '10px 12px', borderRadius: '8px', cursor: 'pointer', marginBottom: '4px',
-              background: currentView === item.id ? '#6366f1' : 'transparent',
-              color: currentView === item.id ? 'white' : '#94a3b8' }}>
+            style={{ padding: '12px 16px', borderRadius: '10px', cursor: 'pointer', marginBottom: '8px',
+              fontWeight: 600, transition: 'var(--transition)',
+              background: currentView === item.id ? 'var(--primary)' : 'rgba(255,255,255,0.03)',
+              color: currentView === item.id ? 'white' : 'var(--text-muted)' }}>
             {item.label}
           </div>
         ))}
@@ -82,17 +83,17 @@ const Admin = ({ onSetupComplete }) => {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '30px' }}>
               {[
                 { label: 'Total Employees', value: Array.isArray(users) ? users.filter(u => u.role === 'Employee').length : 0, color: '#6366f1' },
-                { label: 'Total Managers', value: Array.isArray(users) ? users.filter(u => u.role === 'Manager').length : 0, color: '#22c55e' },
+                { label: 'Total Managers', value: Array.isArray(users) ? users.filter(u => u.role === 'Manager').length : 0, color: '#10b981' },
                 { label: 'Approval Rules', value: Array.isArray(approvalRules) ? approvalRules.length : 0, color: '#f59e0b' },
               ].map((stat, i) => (
-                <div key={i} style={{ background: '#1e293b', borderRadius: '12px', padding: '20px', borderTop: `3px solid ${stat.color}` }}>
-                  <div style={{ fontSize: '32px', fontWeight: 'bold', color: stat.color }}>{stat.value}</div>
-                  <div style={{ color: '#94a3b8', marginTop: '4px' }}>{stat.label}</div>
+                <div key={i} className="glass-panel animate-slide-up" style={{ padding: '24px', borderTop: `4px solid ${stat.color}`, animationDelay: `${i * 0.1}s` }}>
+                  <div style={{ fontSize: '36px', fontWeight: 'bold', color: stat.color, marginBottom: '4px' }}>{stat.value}</div>
+                  <div style={{ color: 'var(--text-muted)', fontSize: '14px', fontWeight: 500 }}>{stat.label}</div>
                 </div>
               ))}
             </div>
-            <div style={{ background: '#1e293b', borderRadius: '12px', padding: '20px' }}>
-              <h3 style={{ color: '#e2e8f0', marginTop: 0 }}>All Users</h3>
+            <div className="glass-panel animate-slide-up" style={{ padding: '24px', animationDelay: '0.3s' }}>
+              <h3 style={{ color: '#e2e8f0', marginTop: 0, marginBottom: '20px' }}>All Users Index</h3>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid #334155' }}>
@@ -123,44 +124,38 @@ const Admin = ({ onSetupComplete }) => {
         {/* USERS */}
         {currentView === 'users' && (
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
               <h1 style={{ color: '#e2e8f0', margin: 0 }}>Users & Roles</h1>
-              <button onClick={() => setShowAddUser(!showAddUser)}
-                style={{ padding: '10px 20px', background: '#6366f1', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
+              <button className="btn-primary" onClick={() => setShowAddUser(!showAddUser)}>
                 + Add User
               </button>
             </div>
 
             {showAddUser && (
-              <div style={{ background: '#1e293b', borderRadius: '12px', padding: '20px', marginBottom: '20px' }}>
+              <div className="glass-panel animate-slide-up" style={{ padding: '24px', marginBottom: '24px', border: '1px solid var(--primary)' }}>
                 <h3 style={{ marginTop: 0, color: '#e2e8f0' }}>New User</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  <input placeholder="Full Name" value={newUser.name} onChange={e => setNewUser({ ...newUser, name: e.target.value })}
-                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: 'white' }} />
-                  <input placeholder="Email" value={newUser.email} onChange={e => setNewUser({ ...newUser, email: e.target.value })}
-                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: 'white' }} />
-                  <select value={newUser.role} onChange={e => setNewUser({ ...newUser, role: e.target.value })}
-                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: 'white' }}>
-                    <option value="Employee">Employee</option>
-                    <option value="Manager">Manager</option>
-                    <option value="CFO">CFO</option>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <input className="glass-input" placeholder="Full Name" value={newUser.name} onChange={e => setNewUser({ ...newUser, name: e.target.value })} />
+                  <input className="glass-input" placeholder="Email" value={newUser.email} onChange={e => setNewUser({ ...newUser, email: e.target.value })} />
+                  <select className="glass-input" value={newUser.role} onChange={e => setNewUser({ ...newUser, role: e.target.value })}>
+                    <option style={{color:'#000'}} value="Employee">Employee</option>
+                    <option style={{color:'#000'}} value="Manager">Manager</option>
+                    <option style={{color:'#000'}} value="CFO">CFO</option>
                   </select>
-                  <select value={newUser.manager} onChange={e => setNewUser({ ...newUser, manager: e.target.value })}
-                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: 'white' }}>
-                    <option value="">Select Manager</option>
-                    {users.filter(u => u.role === 'Manager').map(m => (
-                      <option key={m.id} value={m.name}>{m.name}</option>
+                  <select className="glass-input" value={newUser.manager} onChange={e => setNewUser({ ...newUser, manager: e.target.value })}>
+                    <option style={{color:'#000'}} value="">Select Manager</option>
+                    {Array.isArray(users) && users.filter(u => u.role === 'Manager').map(m => (
+                      <option style={{color:'#000'}} key={m.id} value={m.name}>{m.name}</option>
                     ))}
                   </select>
                 </div>
-                <button onClick={handleAddUser}
-                  style={{ marginTop: '12px', padding: '10px 24px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
+                <button className="btn-success" onClick={handleAddUser} style={{ marginTop: '20px', padding: '10px 24px', fontSize: 15 }}>
                   Save User
                 </button>
               </div>
             )}
 
-            <div style={{ background: '#1e293b', borderRadius: '12px', padding: '20px' }}>
+            <div className="glass-panel animate-slide-up" style={{ padding: '24px' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid #334155' }}>
@@ -200,48 +195,44 @@ const Admin = ({ onSetupComplete }) => {
         {/* APPROVAL RULES */}
         {currentView === 'approval' && (
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
               <h1 style={{ color: '#e2e8f0', margin: 0 }}>Approval Rules</h1>
-              <button onClick={() => setShowAddRule(!showAddRule)}
-                style={{ padding: '10px 20px', background: '#6366f1', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
+              <button className="btn-primary" onClick={() => setShowAddRule(!showAddRule)}>
                 + Add Rule
               </button>
             </div>
 
             {showAddRule && (
-              <div style={{ background: '#1e293b', borderRadius: '12px', padding: '20px', marginBottom: '20px' }}>
+              <div className="glass-panel animate-slide-up" style={{ padding: '24px', marginBottom: '24px', border: '1px solid var(--primary)' }}>
                 <h3 style={{ marginTop: 0, color: '#e2e8f0' }}>New Approval Rule</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  <input placeholder="Rule Name" value={newRule.name} onChange={e => setNewRule({ ...newRule, name: e.target.value })}
-                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: 'white' }} />
-                  <select value={newRule.type} onChange={e => setNewRule({ ...newRule, type: e.target.value })}
-                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: 'white' }}>
-                    <option value="sequential">Sequential</option>
-                    <option value="percentage">Percentage</option>
-                    <option value="hybrid">Hybrid</option>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <input className="glass-input" placeholder="Rule Name" value={newRule.name} onChange={e => setNewRule({ ...newRule, name: e.target.value })} />
+                  <select className="glass-input" value={newRule.type} onChange={e => setNewRule({ ...newRule, type: e.target.value })}>
+                    <option style={{color:'#000'}} value="sequential">Sequential</option>
+                    <option style={{color:'#000'}} value="percentage">Percentage</option>
+                    <option style={{color:'#000'}} value="hybrid">Hybrid</option>
                   </select>
-                  <input placeholder="Approvers (comma separated: Manager, Finance, Director)" value={newRule.approvers}
+                  <input className="glass-input" placeholder="Approvers (comma separated: Manager, Finance, Director)" value={newRule.approvers}
                     onChange={e => setNewRule({ ...newRule, approvers: e.target.value })}
-                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: 'white', gridColumn: '1 / -1' }} />
+                    style={{ gridColumn: '1 / -1' }} />
                   {(newRule.type === 'percentage' || newRule.type === 'hybrid') && (
-                    <div>
-                      <label style={{ color: '#94a3b8', fontSize: '13px' }}>Min Approval %: {newRule.percentage}%</label>
+                    <div style={{ gridColumn: '1 / -1' }}>
+                      <label style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600 }}>Min Approval Threshold: <span style={{color: 'var(--primary)'}}>{newRule.percentage}%</span></label>
                       <input type="range" min="10" max="100" value={newRule.percentage}
                         onChange={e => setNewRule({ ...newRule, percentage: e.target.value })}
-                        style={{ width: '100%', marginTop: '8px' }} />
+                        style={{ width: '100%', marginTop: '12px', accentColor: 'var(--primary)' }} />
                     </div>
                   )}
                 </div>
-                <button onClick={handleAddRule}
-                  style={{ marginTop: '12px', padding: '10px 24px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
+                <button className="btn-success" onClick={handleAddRule} style={{ marginTop: '20px', padding: '10px 24px', fontSize: 15 }}>
                   Save Rule
                 </button>
               </div>
             )}
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {(Array.isArray(approvalRules) ? approvalRules : []).map(rule => (
-                <div key={rule.id} style={{ background: '#1e293b', borderRadius: '12px', padding: '20px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {(Array.isArray(approvalRules) ? approvalRules : []).map((rule, idx) => (
+                <div key={rule.id} className="glass-panel animate-slide-up" style={{ padding: '24px', animationDelay: `${idx * 0.1}s` }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <h3 style={{ margin: 0, color: '#e2e8f0' }}>{rule.name}</h3>
                     <span style={{ background: '#6366f122', color: '#6366f1', padding: '4px 12px', borderRadius: '20px', fontSize: '12px' }}>{rule.type}</span>
@@ -267,28 +258,24 @@ const Admin = ({ onSetupComplete }) => {
 
         {/* COMPANY SETTINGS */}
         {currentView === 'company' && (
-          <div>
+          <div className="animate-slide-up">
             <h1 style={{ color: '#e2e8f0', marginTop: 0 }}>Company Settings</h1>
-            <div style={{ background: '#1e293b', borderRadius: '12px', padding: '28px', maxWidth: '500px' }}>
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', color: '#94a3b8', fontSize: '13px', marginBottom: '6px' }}>Company Name</label>
-                <input value={company.name} onChange={e => setCompany({ ...company, name: e.target.value })}
-                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: 'white', boxSizing: 'border-box' }} />
+            <div className="glass-panel" style={{ padding: '32px', maxWidth: '500px' }}>
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}>Company Name</label>
+                <input className="glass-input" style={{ width: '100%' }} value={company.name} onChange={e => setCompany({ ...company, name: e.target.value })} />
               </div>
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', color: '#94a3b8', fontSize: '13px', marginBottom: '6px' }}>Country</label>
-                <select value={company.country} onChange={handleCountryChange}
-                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: 'white', boxSizing: 'border-box' }}>
-                  {countries.map(c => <option key={c} value={c}>{c}</option>)}
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}>Country</label>
+                <select className="glass-input" style={{ width: '100%' }} value={company.country} onChange={handleCountryChange}>
+                  {countries.map(c => <option style={{color:'#000'}} key={c} value={c}>{c}</option>)}
                 </select>
               </div>
-              <div style={{ marginBottom: '24px' }}>
-                <label style={{ display: 'block', color: '#94a3b8', fontSize: '13px', marginBottom: '6px' }}>Base Currency (auto-set)</label>
-                <input value={company.currency} readOnly
-                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: '#6366f1', boxSizing: 'border-box' }} />
+              <div style={{ marginBottom: '30px' }}>
+                <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}>Base Currency (auto-set)</label>
+                <input className="glass-input" readOnly style={{ width: '100%', color: 'var(--primary)', borderColor: 'var(--primary)', background: 'rgba(99,102,241,0.05)' }} value={company.currency} />
               </div>
-              <button onClick={() => alert('Settings saved!')}
-                style={{ width: '100%', padding: '12px', background: '#6366f1', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '15px' }}>
+              <button className="btn-primary" onClick={() => alert('Settings saved!')} style={{ width: '100%', padding: '14px', fontSize: '15px' }}>
                 Save Settings
               </button>
             </div>

@@ -69,83 +69,76 @@ const Employee = ({ expenses = [], onSubmitExpense, employeeName }) => {
   };
 
   return (
-    <div style={{ fontFamily: 'Segoe UI, sans-serif', maxWidth: '900px', margin: '0 auto', padding: '20px', background: '#0f172a', minHeight: '100vh', color: 'white' }}>
+    <div className="animate-slide-up" style={{ maxWidth: '900px', margin: '0 auto', padding: '0 20px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-        <h1 style={{ color: '#6366f1', fontSize: '24px', margin: 0 }}>💼 Employee Portal</h1>
-        {/* DYNAMIC ROLE BADGE: Replaces the hardcoded "Admin" label */}
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-        </div>
+        <h1 style={{ color: 'var(--primary)', fontSize: '28px', margin: 0, fontWeight: 700 }}>💼 Employee Center</h1>
       </div>
 
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
+      <div className="glass-panel" style={{ display: 'flex', gap: '8px', padding: '8px', marginBottom: '30px', width: 'fit-content' }}>
         <button onClick={() => setActiveTab('submit')}
-          style={{ padding: '10px 24px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 'bold', background: activeTab === 'submit' ? '#6366f1' : '#1e293b', color: activeTab === 'submit' ? 'white' : '#94a3b8' }}>
-          + Submit Expense
+          style={{ padding: '10px 24px', borderRadius: '10px', border: 'none', cursor: 'pointer', fontWeight: '600', transition: 'var(--transition)',
+            background: activeTab === 'submit' ? 'var(--primary)' : 'transparent',
+            color: activeTab === 'submit' ? 'white' : 'var(--text-muted)' }}>
+          + Submit Claim
         </button>
         <button onClick={() => setActiveTab('history')}
-          style={{ padding: '10px 24px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 'bold', background: activeTab === 'history' ? '#6366f1' : '#1e293b', color: activeTab === 'history' ? 'white' : '#94a3b8' }}>
-          📋 My History
+          style={{ padding: '10px 24px', borderRadius: '10px', border: 'none', cursor: 'pointer', fontWeight: '600', transition: 'var(--transition)',
+            background: activeTab === 'history' ? 'var(--primary)' : 'transparent',
+            color: activeTab === 'history' ? 'white' : 'var(--text-muted)' }}>
+          📋 Claim History
         </button>
       </div>
 
       {activeTab === 'submit' && (
-        <div style={{ background: '#1e293b', borderRadius: '16px', padding: '28px', border: '1px solid #334155' }}>
+        <div className="glass-panel animate-slide-up" style={{ padding: '32px' }}>
           <h2 style={{ marginTop: 0, color: '#e2e8f0' }}>New Expense Claim</h2>
           
           <ReceiptScanner onScanComplete={handleScanComplete} />
 
           <form onSubmit={handleSubmit}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
               <div>
-                <label style={{ display: 'block', marginBottom: '6px', color: '#94a3b8', fontSize: '13px' }}>Description *</label>
-                <input name="description" value={form.description} onChange={handleChange} required placeholder="e.g. Restaurant bill"
-                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: 'white', boxSizing: 'border-box' }} />
+                <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600 }}>Description *</label>
+                <input className="glass-input" style={{ width: '100%' }} name="description" value={form.description} onChange={handleChange} required placeholder="e.g. Client Dinner" />
               </div>
               <div>
-                <label style={{ display: 'block', marginBottom: '6px', color: '#94a3b8', fontSize: '13px' }}>Category *</label>
-                <select name="category" value={form.category} onChange={handleChange} required
-                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: 'white', boxSizing: 'border-box' }}>
-                  <option value="">Select category</option>
-                  {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600 }}>Category *</label>
+                <select className="glass-input" style={{ width: '100%' }} name="category" value={form.category} onChange={handleChange} required>
+                  <option style={{color:'#000'}} value="">Select category</option>
+                  {categories.map(c => <option style={{color:'#000'}} key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <div>
-                <label style={{ display: 'block', marginBottom: '6px', color: '#94a3b8', fontSize: '13px' }}>Amount *</label>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <input name="amount" type="number" value={form.amount} onChange={handleChange} required placeholder="0.00"
-                    style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: 'white' }} />
-                  <select name="currency" value={form.currency} onChange={handleChange}
-                    style={{ padding: '10px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: 'white' }}>
-                    {currencies.map(c => <option key={c} value={c}>{c}</option>)}
+                <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600 }}>Amount *</label>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <input className="glass-input" style={{ flex: 1 }} name="amount" type="number" step="0.01" value={form.amount} onChange={handleChange} required placeholder="0.00" />
+                  <select className="glass-input" name="currency" value={form.currency} onChange={handleChange}>
+                    {currencies.map(c => <option style={{color:'#000'}} key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
               </div>
               <div>
-                <label style={{ display: 'block', marginBottom: '6px', color: '#94a3b8', fontSize: '13px' }}>Date *</label>
-                <input name="date" type="date" value={form.date} onChange={handleChange} required
-                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: 'white', boxSizing: 'border-box' }} />
+                <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600 }}>Date *</label>
+                <input className="glass-input" style={{ width: '100%', colorScheme: 'dark' }} name="date" type="date" value={form.date} onChange={handleChange} required />
               </div>
               <div>
-                <label style={{ display: 'block', marginBottom: '6px', color: '#94a3b8', fontSize: '13px' }}>Paid By</label>
-                <input name="paidBy" value={form.paidBy} onChange={handleChange} placeholder="Your name"
-                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: 'white', boxSizing: 'border-box' }} />
+                <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600 }}>Paid By</label>
+                <input className="glass-input" style={{ width: '100%' }} name="paidBy" value={form.paidBy} onChange={handleChange} placeholder="Your name or Corporate Card" />
               </div>
               <div>
-                <label style={{ display: 'block', marginBottom: '6px', color: '#94a3b8', fontSize: '13px' }}>Remarks</label>
-                <input name="remarks" value={form.remarks} onChange={handleChange} placeholder="Optional notes"
-                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: 'white', boxSizing: 'border-box' }} />
+                <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600 }}>Remarks</label>
+                <input className="glass-input" style={{ width: '100%' }} name="remarks" value={form.remarks} onChange={handleChange} placeholder="Optional context for managers" />
               </div>
             </div>
-            <button type="submit"
-              style={{ marginTop: '24px', width: '100%', padding: '14px', background: '#6366f1', color: 'white', border: 'none', borderRadius: '10px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>
-              Submit Expense →
+            <button className="btn-primary" type="submit" style={{ marginTop: '32px', width: '100%', padding: '16px', fontSize: '16px' }}>
+              Submit Claim →
             </button>
           </form>
         </div>
       )}
 
       {activeTab === 'history' && (
-        <div style={{ background: '#1e293b', borderRadius: '16px', padding: '28px', border: '1px solid #334155' }}>
+        <div className="glass-panel animate-slide-up" style={{ padding: '32px' }}>
           <h2 style={{ marginTop: 0, color: '#e2e8f0' }}>My Expense History</h2>
           {expenses.length === 0 ? (
             <p style={{ color: '#94a3b8', textAlign: 'center', padding: '40px' }}>No expenses submitted yet!</p>

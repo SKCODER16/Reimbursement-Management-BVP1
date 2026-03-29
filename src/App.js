@@ -24,8 +24,8 @@ function AppInner() {
   }
 
   return (
-    <div style={{ background: '#0f172a', minHeight: '100vh', color: 'white' }}>
-      <nav style={{ background: '#1e293b', padding: '10px', display: 'flex', gap: '10px', justifyContent: 'center', alignItems: 'center' }}>
+    <div>
+      <nav className="glass-panel" style={{ padding: '12px 24px', display: 'flex', gap: '12px', alignItems: 'center', margin: '20px', position: 'sticky', top: 20, zIndex: 100 }}>
         <span style={{ marginRight: 'auto', paddingLeft: '20px', color: '#6366f1', fontWeight: 'bold' }}>
           🏢 {company?.companyName} ({company?.currencySymbol || company?.currency})
         </span>
@@ -44,15 +44,10 @@ function AppInner() {
               key={role}
               onClick={() => setCurrentUser({ ...currentUser, role })}
               style={{
-                padding: '8px 20px',
-                borderRadius: '8px',
-                border: 'none',
-                cursor: 'pointer',
-                fontWeight: 'bold',
-                background: currentUser.role === role ? '#6366f1' : '#334155',
-                color: 'white',
-                margin: '0 5px',
-                transition: '0.3s'
+                padding: '8px 20px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: '600',
+                background: currentUser.role === role ? 'var(--primary)' : 'rgba(255,255,255,0.05)',
+                color: currentUser.role === role ? '#fff' : 'var(--text-muted)',
+                margin: '0 5px', transition: 'var(--transition)'
               }}
             >
               {role.toUpperCase()}
@@ -68,16 +63,14 @@ function AppInner() {
             border: '1px solid #ef4444',
             padding: '7px 15px',
             borderRadius: '8px',
-            cursor: 'pointer',
-            marginLeft: '10px',
-            fontWeight: 'bold'
+            cursor: 'pointer', marginLeft: 'auto', fontWeight: '600', transition: 'var(--transition)'
           }}
         >
           Logout
         </button>
       </nav>
 
-      <div style={{ padding: '20px' }}>
+      <div className="animate-slide-up" style={{ padding: '0 20px' }}>
         {currentUser.role === 'employee' && (
           <Employee
             expenses={expenses}

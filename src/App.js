@@ -8,7 +8,7 @@ function App() {
       id: 1,
       employeeName: 'Sarah',
       category: 'Food',
-      status: 'pending',
+      status: 'Pending',
       amount: 50,
       currency: 'USD',
       convertedAmount: 4200 // This will eventually be calculated by your service
@@ -17,7 +17,7 @@ function App() {
       id: 2,
       employeeName: 'John',
       category: 'Travel',
-      status: 'pending',
+      status: 'Pending',
       amount: 100,
       currency: 'EUR',
       convertedAmount: 8900
@@ -25,13 +25,22 @@ function App() {
   ]);
 
   const handleApprove = (id) => {
-    console.log("Approved expense:", id);
-    setDummyExpenses(dummyExpenses.filter(exp => exp.id !== id));
+    setDummyExpenses(prev => prev.map(exp => {
+      if (exp.id === id) {
+        // This updates the specific expense status instead of deleting it
+        return { ...exp, status: 'Approved by Manager' };
+      }
+      return exp;
+    }));
   };
 
   const handleReject = (id) => {
-    console.log("Rejected expense:", id);
-    setDummyExpenses(dummyExpenses.filter(exp => exp.id !== id));
+    setDummyExpenses(prev => prev.map(exp => {
+      if (exp.id === id) {
+        return { ...exp, status: 'Rejected' };
+      }
+      return exp;
+    }));
   };
 
   return (

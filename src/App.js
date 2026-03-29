@@ -1,75 +1,64 @@
 import React, { useState } from 'react';
+import Employee from './components/Employee/Employee';
+import Admin from './components/Admin/Admin';
 import ManagerTable from './components/Manager/ManagerTable';
-import Employee from './components/Employee/Employee.js';
 
 function App() {
-  // Mock data representing what Person B (Employee) will eventually send you
-  const [dummyExpenses, setDummyExpenses] = useState([
-    {
-      id: 1,
-      employeeName: 'Sarah',
-      category: 'Food',
-      status: 'Pending',
-      amount: 50,
-      currency: 'USD',
-      convertedAmount: 4200 // This will eventually be calculated by your service
-    },
-    {
-      id: 2,
-      employeeName: 'John',
-      category: 'Travel',
-      status: 'Pending',
-      amount: 100,
-      currency: 'EUR',
-      convertedAmount: 8900
-    }
-  ]);
-
-  const handleApprove = (id) => {
-    setDummyExpenses(prev => prev.map(exp => {
-      if (exp.id === id) {
-        // This updates the specific expense status instead of deleting it
-        return { ...exp, status: 'Approved by Manager' };
-      }
-      return exp;
-    }));
-  };
-
-  const handleReject = (id) => {
-    setDummyExpenses(prev => prev.map(exp => {
-      if (exp.id === id) {
-        return { ...exp, status: 'Rejected' };
-      }
-      return exp;
-    }));
-  };
-
+  const [currentRole, setCurrentRole] = useState('employee');
   const [expenses, setExpenses] = useState([]);
 
+  // These states are the "Source of Truth" from Person A's Admin logic
+  const [company, setCompany] = useState({ name: 'My Company', currency: 'INR', country: 'India' });
+  const [users] = useState([
+    { id: 1, name: 'Sarah', email: 'sarah@company.com', role: 'Employee', manager: 'John' },
+    { id: 2, name: 'John', email: 'john@company.com', role: 'Manager', manager: '' },
+    { id: 3, name: 'Mitchell', email: 'mitchell@company.com', role: 'Manager', manager: '' },
+  ]);
+
   const handleSubmitExpense = (expense) => {
-    setExpenses([...expenses, expense]);
+    // Add new expense to the main list with a 'pending' status
+    setExpenses([...expenses, { ...expense, status: 'pending' }]);
+  };
+
+  const handleAction = (id, newStatus, comment) => {
+    setExpenses(prev => prev.map(exp =>
+      exp.id === id ? { ...exp, status: newStatus, managerComment: comment } : exp
+    ));
   };
 
   return (
-    <div style={{ backgroundColor: '#121212', minHeight: '100vh', color: 'white', padding: '2rem' }}>
-      <h1>Reimbursement Management</h1>
-      
-      {/* Employee Section */}
-      <Employee
-        expenses={expenses}
-        onSubmitExpense={handleSubmitExpense}
-        employeeName="Sarah"
-      />
+    <div style={{ background: '#0f172a', minHeight: '100vh', color: 'white' }}>
+      {/* Universal Role Switcher for the Hackathon Demo */}
+      <nav style={{ background: '#1e293b', padding: '10px', display: 'flex', gap: '10px', justifyContent: 'center' }}>
+        {['employee', 'manager', 'admin'].map(role => (
+          <button key={role} onClick={() => setCurrentRole(role)}
+            style={{
+              padding: '8px 20px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 'bold',
+              background: currentRole === role ? '#6366f1' : '#334155', color: 'white'
+            }}>
+            {role.toUpperCase()}
+          </button>
+        ))}
+      </nav>
 
-      <hr style={{ margin: '2rem 0', borderColor: '#333' }} />
+      <div style={{ padding: '20px' }}>
+        {currentRole === 'employee' && (
+          <Employee expenses={expenses} onSubmitExpense={handleSubmitExpense} employeeName="Sarah" />
+        )}
 
-      {/* Manager Section */}
-      <ManagerTable
-        expenses={dummyExpenses}
-        companyCurrency="INR"
-        onApprove={handleApprove}
-        onReject={handleReject}
-      />
+        {currentRole === 'manager' && (
+          <ManagerTable
+            expenses={expenses.filter(e => e.status === 'pending')}
+            companyCurrency={company.currency}
+            onApprove={(id, comment) => handleAction(id, 'approved', comment)}
+            onReject={(id, comment) => handleAction(id, 'rejected', comment)}
+          />
+        )}
+
+        {currentRole === 'admin' && (
+          <Admin />
+        )}
+      </div>
     </div>
   );
 }

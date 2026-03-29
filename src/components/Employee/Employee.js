@@ -69,25 +69,29 @@ const Employee = ({ expenses = [], onSubmitExpense, employeeName }) => {
 
   return (
     <div style={{ display: 'flex', gap: '40px', maxWidth: '1400px', margin: '0 auto' }}>
-      
+
       {/* Dynamic Left Sidebar for Employee */}
       <div style={{ width: '240px', flexShrink: 0 }}>
         <h2 style={{ color: 'var(--primary)', margin: '0 0 4px', fontSize: '18px', fontWeight: 700 }}>Employee Portal</h2>
         <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '32px' }}>
           Expense Management
         </div>
-        
+
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <div onClick={() => setActiveTab('submit')}
-            style={{ padding: '12px 16px', borderRadius: '12px', cursor: 'pointer', fontWeight: 600, transition: 'var(--transition)', display: 'flex', alignItems: 'center', gap: '12px',
+            style={{
+              padding: '12px 16px', borderRadius: '12px', cursor: 'pointer', fontWeight: 600, transition: 'var(--transition)', display: 'flex', alignItems: 'center', gap: '12px',
               background: activeTab === 'submit' ? 'rgba(99, 102, 241, 0.1)' : 'transparent',
-              color: activeTab === 'submit' ? 'var(--text-main)' : 'var(--text-muted)' }}>
+              color: activeTab === 'submit' ? 'var(--text-main)' : 'var(--text-muted)'
+            }}>
             <span style={{ fontSize: '16px' }}>📝</span> New Claim
           </div>
           <div onClick={() => setActiveTab('history')}
-            style={{ padding: '12px 16px', borderRadius: '12px', cursor: 'pointer', fontWeight: 600, transition: 'var(--transition)', display: 'flex', alignItems: 'center', gap: '12px',
+            style={{
+              padding: '12px 16px', borderRadius: '12px', cursor: 'pointer', fontWeight: 600, transition: 'var(--transition)', display: 'flex', alignItems: 'center', gap: '12px',
               background: activeTab === 'history' ? 'rgba(99, 102, 241, 0.1)' : 'transparent',
-              color: activeTab === 'history' ? 'var(--text-main)' : 'var(--text-muted)' }}>
+              color: activeTab === 'history' ? 'var(--text-main)' : 'var(--text-muted)'
+            }}>
             <span style={{ fontSize: '16px' }}>📋</span> History
           </div>
           <div style={{ padding: '12px 16px', borderRadius: '12px', cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-muted)' }}>
@@ -113,11 +117,11 @@ const Employee = ({ expenses = [], onSubmitExpense, employeeName }) => {
             <p style={{ fontSize: '16px', color: 'var(--text-muted)', margin: '0 0 40px' }}>Submit your reimbursement request with crystalline clarity.</p>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.5fr) minmax(0, 1fr)', gap: '32px' }}>
-              
+
               {/* Left Form Box */}
               <div className="surface-panel" style={{ padding: '32px' }}>
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                  
+
                   <div>
                     <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--primary)', marginBottom: '8px' }}>Description</label>
                     <input className="glass-input" style={{ width: '100%', background: 'var(--bg-deep-space)', border: 'none' }} name="description" value={form.description} onChange={handleChange} required placeholder="e.g. Lunch with Client from Tech Corp" />
@@ -127,15 +131,15 @@ const Employee = ({ expenses = [], onSubmitExpense, employeeName }) => {
                     <div>
                       <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--primary)', marginBottom: '8px' }}>Category</label>
                       <select className="glass-input" style={{ width: '100%', background: 'var(--bg-deep-space)', border: 'none' }} name="category" value={form.category} onChange={handleChange} required>
-                        <option style={{color:'#000'}} value="">Select category</option>
-                        {categories.map(c => <option style={{color:'#000'}} key={c} value={c}>{c}</option>)}
+                        <option style={{ color: '#000' }} value="">Select category</option>
+                        {categories.map(c => <option style={{ color: '#000' }} key={c} value={c}>{c}</option>)}
                       </select>
                     </div>
                     <div>
                       <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--primary)', marginBottom: '8px' }}>Amount</label>
                       <div style={{ display: 'flex', gap: '8px' }}>
                         <select className="glass-input" name="currency" value={form.currency} onChange={handleChange} style={{ padding: '12px 8px', background: 'var(--bg-deep-space)', border: 'none' }}>
-                          {currencies.map(c => <option style={{color:'#000'}} key={c} value={c}>{c}</option>)}
+                          {currencies.map(c => <option style={{ color: '#000' }} key={c} value={c}>{c}</option>)}
                         </select>
                         <input className="glass-input" style={{ flex: 1, background: 'var(--bg-deep-space)', border: 'none' }} name="amount" type="number" step="0.01" value={form.amount} onChange={handleChange} required placeholder="0.00" />
                       </div>
@@ -150,9 +154,9 @@ const Employee = ({ expenses = [], onSubmitExpense, employeeName }) => {
                     <div>
                       <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--primary)', marginBottom: '8px' }}>Paid By</label>
                       <select className="glass-input" style={{ width: '100%', background: 'var(--bg-deep-space)', border: 'none' }} name="paidBy" value={form.paidBy} onChange={handleChange}>
-                        <option style={{color:'#000'}} value="Personal Credit Card">Personal Credit Card</option>
-                        <option style={{color:'#000'}} value="Cash">Cash</option>
-                        <option style={{color:'#000'}} value="Corporate Card">Corporate Card</option>
+                        <option style={{ color: '#000' }} value="Personal Credit Card">Personal Credit Card</option>
+                        <option style={{ color: '#000' }} value="Cash">Cash</option>
+                        <option style={{ color: '#000' }} value="Corporate Card">Corporate Card</option>
                       </select>
                     </div>
                   </div>
@@ -172,11 +176,11 @@ const Employee = ({ expenses = [], onSubmitExpense, employeeName }) => {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 <div className="surface-panel" style={{ padding: '32px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-                     <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: 'var(--success)', boxShadow: '0 0 10px var(--success)' }}></div>
-                     <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 700 }}>Approval Stream</h3>
+                    <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: 'var(--success)', boxShadow: '0 0 10px var(--success)' }}></div>
+                    <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 700 }}>Approval Stream</h3>
                   </div>
                   <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.6', margin: '0 0 24px' }}>
-                    Your request will be routed to <strong style={{color: 'var(--text-main)'}}>Sarah Jenkins (Dept Lead)</strong> for immediate review once submitted.
+                    Your request will be routed to <strong style={{ color: 'var(--text-main)' }}>{currentUser?.manager || 'a Department Lead'}</strong> for immediate review once submitted.
                   </p>
                   <div style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', background: 'rgba(16, 185, 129, 0.1)', padding: '8px 16px', borderRadius: 'var(--radius-pill)' }}>
                     <span style={{ color: 'var(--success)' }}>🛡️</span>
@@ -202,10 +206,10 @@ const Employee = ({ expenses = [], onSubmitExpense, employeeName }) => {
                 </div>
 
                 <div className="surface-panel" style={{ padding: '32px', background: 'linear-gradient(135deg, rgba(8, 19, 41, 0.9), rgba(6, 14, 32, 0.9))', position: 'relative', overflow: 'hidden', minHeight: '180px', display: 'flex', alignItems: 'flex-end' }}>
-                   <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0.1, background: 'radial-gradient(circle at 100% 0%, var(--success) 0%, transparent 50%)' }}></div>
-                   <div style={{ position: 'relative', zIndex: 1, width: '100%' }}>
-                      <ReceiptScanner onScanComplete={handleScanComplete} hidePreview={true} />
-                   </div>
+                  <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0.1, background: 'radial-gradient(circle at 100% 0%, var(--success) 0%, transparent 50%)' }}></div>
+                  <div style={{ position: 'relative', zIndex: 1, width: '100%' }}>
+                    <ReceiptScanner onScanComplete={handleScanComplete} hidePreview={true} />
+                  </div>
                 </div>
               </div>
             </div>
@@ -235,10 +239,10 @@ const Employee = ({ expenses = [], onSubmitExpense, employeeName }) => {
                         <td style={{ color: '#94a3b8' }}>{exp.date}</td>
                         <td style={{ color: '#fff', fontWeight: 'bold' }}>{exp.amount} {exp.currency}</td>
                         <td>
-                           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 600, ...getStatusStyle(exp.status) }}>
-                             <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'currentColor' }}></div>
-                             {exp.status.charAt(0).toUpperCase() + exp.status.slice(1)}
-                           </span>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 600, ...getStatusStyle(exp.status) }}>
+                            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'currentColor' }}></div>
+                            {exp.status.charAt(0).toUpperCase() + exp.status.slice(1)}
+                          </span>
                         </td>
                       </tr>
                     ))}

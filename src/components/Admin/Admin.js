@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 
+// Avatar Placeholder
+const Avatar = ({ initials, color }) => (
+  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: color || 'var(--primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 600, flexShrink: 0 }}>
+    {initials}
+  </div>
+);
+
 const Admin = ({ onSetupComplete }) => {
-  const [currentView, setCurrentView] = useState('dashboard');
+  const [currentView, setCurrentView] = useState('users');
   
   const { company, setCompany, users, setUsers, approvalRulesArray: approvalRules, setApprovalRulesArray: setApprovalRules } = useApp();
-
 
   const [newUser, setNewUser] = useState({ name: '', email: '', role: 'Employee', manager: '' });
   const [newRule, setNewRule] = useState({ name: '', type: 'sequential', percentage: 60, approvers: '' });
@@ -47,220 +53,272 @@ const Admin = ({ onSetupComplete }) => {
   };
 
   const sidebarItems = [
-    { id: 'dashboard', label: '📊 Dashboard' },
-    { id: 'users', label: '👥 Users & Roles' },
-    { id: 'approval', label: '✅ Approval Rules' },
-    { id: 'company', label: '🏢 Company Settings' },
+    { id: 'dashboard', label: 'Dashboard', icon: '⊞' },
+    { id: 'users', label: 'Users', icon: '👥' },
+    { id: 'approval', label: 'Rules', icon: '≡' },
+    { id: 'company', label: 'Settings', icon: '⚙️' },
   ];
 
   return (
-    <div style={{ display: 'flex', gap: '24px' }}>
+    <div style={{ display: 'flex', gap: '40px', maxWidth: '1400px', margin: '0 auto' }}>
       
-      {/* Sidebar */}
-      <div className="glass-panel" style={{ width: '240px', padding: '24px', flexShrink: 0, height: 'fit-content', position: 'sticky', top: 100 }}>
-        <h2 style={{ color: '#6366f1', marginTop: 0, fontSize: '18px' }}>⚙️ Admin Panel</h2>
-        <div style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '20px' }}>
-          {company.name} · {company.currency}
+      {/* Dynamic Left Sidebar for Admin */}
+      <div style={{ width: '240px', flexShrink: 0, display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <h2 style={{ color: 'var(--primary)', margin: '0 0 4px', fontSize: '18px', fontWeight: 700 }}>Admin Portal</h2>
+        <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '32px' }}>
+          System Oversight
         </div>
-        {sidebarItems.map(item => (
-          <div key={item.id} onClick={() => setCurrentView(item.id)}
-            style={{ padding: '12px 16px', borderRadius: '10px', cursor: 'pointer', marginBottom: '8px',
-              fontWeight: 600, transition: 'var(--transition)',
-              background: currentView === item.id ? 'var(--primary)' : 'rgba(255,255,255,0.03)',
-              color: currentView === item.id ? 'white' : 'var(--text-muted)' }}>
-            {item.label}
+        
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          {sidebarItems.map(item => (
+            <div key={item.id} onClick={() => setCurrentView(item.id)}
+              style={{ padding: '12px 16px', borderRadius: '12px', cursor: 'pointer', fontWeight: 600, transition: 'var(--transition)', display: 'flex', alignItems: 'center', gap: '12px',
+                background: currentView === item.id ? 'rgba(99, 102, 241, 0.1)' : 'transparent',
+                color: currentView === item.id ? 'var(--text-main)' : 'var(--text-muted)' }}>
+              <span style={{ fontSize: '16px', opacity: currentView === item.id ? 1 : 0.7 }}>{item.icon}</span> {item.label}
+            </div>
+          ))}
+        </div>
+
+        <button className="btn-primary" onClick={() => { setCurrentView('approval'); setShowAddRule(true); }} style={{ marginTop: '32px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px', borderRadius: 'var(--radius-pill)', fontWeight: 600 }}>
+          <span>+</span> New Rule
+        </button>
+
+        <div style={{ marginTop: 'auto', paddingTop: '40px' }}>
+          <div style={{ padding: '12px 16px', color: 'var(--text-muted)', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
+            <span style={{ fontSize: '16px' }}>❓</span> Support
           </div>
-        ))}
+          <div style={{ padding: '12px 16px', color: 'var(--text-muted)', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
+            <span style={{ fontSize: '16px' }}>💬</span> Feedback
+          </div>
+        </div>
       </div>
 
       {/* Main Content */}
-      <div style={{ flex: 1, padding: '30px' }}>
+      <div style={{ flex: 1, overflow: 'hidden' }}>
 
-        {/* DASHBOARD */}
-        {currentView === 'dashboard' && (
-          <div>
-            <h1 style={{ color: '#e2e8f0', marginTop: 0 }}>Dashboard</h1>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '30px' }}>
-              {[
-                { label: 'Total Employees', value: Array.isArray(users) ? users.filter(u => u.role === 'Employee').length : 0, color: '#6366f1' },
-                { label: 'Total Managers', value: Array.isArray(users) ? users.filter(u => u.role === 'Manager').length : 0, color: '#10b981' },
-                { label: 'Approval Rules', value: Array.isArray(approvalRules) ? approvalRules.length : 0, color: '#f59e0b' },
-              ].map((stat, i) => (
-                <div key={i} className="glass-panel animate-slide-up" style={{ padding: '24px', borderTop: `4px solid ${stat.color}`, animationDelay: `${i * 0.1}s` }}>
-                  <div style={{ fontSize: '36px', fontWeight: 'bold', color: stat.color, marginBottom: '4px' }}>{stat.value}</div>
-                  <div style={{ color: 'var(--text-muted)', fontSize: '14px', fontWeight: 500 }}>{stat.label}</div>
+        {/* USERS (Default Dashboard replacement for mockup logic) */}
+        {currentView === 'users' && (
+          <div className="animate-slide-up">
+            
+            {/* KPI Cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', marginBottom: '32px' }}>
+              <div className="surface-panel" style={{ padding: '24px', position: 'relative', overflow: 'hidden' }}>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>Total Employees</div>
+                <div style={{ fontSize: '40px', fontWeight: 800, color: 'var(--primary)', marginBottom: '16px', lineHeight: 1 }}>{Array.isArray(users) ? users.length : 0}</div>
+                <div style={{ fontSize: '13px', color: 'var(--success)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span>↗</span> 12% from last quarter
                 </div>
-              ))}
+                <div style={{ position: 'absolute', right: '-10%', bottom: '-20%', fontSize: '120px', opacity: 0.03 }}>👥</div>
+              </div>
+              
+              <div className="surface-panel" style={{ padding: '24px', position: 'relative', overflow: 'hidden' }}>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>Total Managers</div>
+                <div style={{ fontSize: '40px', fontWeight: 800, color: 'var(--success)', marginBottom: '16px', lineHeight: 1 }}>{Array.isArray(users) ? users.filter(u => u.role === 'Manager' || u.role === 'CFO').length : 0}</div>
+                <div style={{ fontSize: '13px', color: 'var(--warning)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{color: 'currentColor'}}>∷</span> Direct reports optimized
+                </div>
+                <div style={{ position: 'absolute', right: '-10%', bottom: '-20%', fontSize: '120px', opacity: 0.03 }}>💼</div>
+              </div>
+
+              <div className="surface-panel" style={{ padding: '24px', position: 'relative', overflow: 'hidden' }}>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>Active Rules</div>
+                <div style={{ fontSize: '40px', fontWeight: 800, color: 'var(--warning)', marginBottom: '16px', lineHeight: 1 }}>{Array.isArray(approvalRules) ? approvalRules.length : 0}</div>
+                <div style={{ fontSize: '13px', color: 'var(--primary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span>🛡️</span> All policies compliant
+                </div>
+                <div style={{ position: 'absolute', right: '-10%', bottom: '-20%', fontSize: '120px', opacity: 0.03 }}>≡</div>
+              </div>
             </div>
-            <div className="glass-panel animate-slide-up" style={{ padding: '24px', animationDelay: '0.3s' }}>
-              <h3 style={{ color: '#e2e8f0', marginTop: 0, marginBottom: '20px' }}>All Users Index</h3>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+
+            <div className="surface-panel">
+              <div style={{ padding: '24px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-starlight)' }}>
+                <div>
+                  <h2 style={{ margin: '0 0 4px', fontSize: '20px', fontWeight: 700 }}>All Users Index</h2>
+                  <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted)' }}>Directory of all personnel within the Expressive ecosystem.</p>
+                </div>
+                <div style={{ display: 'flex', gap: '16px' }}>
+                  <button style={{ background: 'transparent', border: '1px solid var(--border-starlight)', color: 'var(--text-main)', padding: '10px 20px', borderRadius: 'var(--radius-pill)', cursor: 'pointer', fontWeight: 600, fontFamily: 'Plus Jakarta Sans' }}>
+                    Export CSV
+                  </button>
+                  <button className="btn-primary" onClick={() => setShowAddUser(!showAddUser)} style={{ padding: '10px 24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span>👤</span> Add User
+                  </button>
+                </div>
+              </div>
+
+              {showAddUser && (
+                <div style={{ padding: '24px 32px', background: 'rgba(99, 102, 241, 0.05)', borderBottom: '1px solid var(--border-starlight)' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                    <input className="glass-input" placeholder="Full Name" value={newUser.name} onChange={e => setNewUser({ ...newUser, name: e.target.value })} />
+                    <input className="glass-input" placeholder="Email" value={newUser.email} onChange={e => setNewUser({ ...newUser, email: e.target.value })} />
+                    <select className="glass-input" value={newUser.role} onChange={e => setNewUser({ ...newUser, role: e.target.value })}>
+                      <option style={{color:'#000'}} value="Employee">Employee</option>
+                      <option style={{color:'#000'}} value="Manager">Manager</option>
+                      <option style={{color:'#000'}} value="CFO">CFO</option>
+                    </select>
+                    <select className="glass-input" value={newUser.manager} onChange={e => setNewUser({ ...newUser, manager: e.target.value })}>
+                      <option style={{color:'#000'}} value="">Select Manager</option>
+                      {Array.isArray(users) && users.filter(u => u.role === 'Manager' || u.role === 'CFO').map(m => (
+                        <option style={{color:'#000'}} key={m.id} value={m.name}>{m.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <button className="btn-success" onClick={handleAddUser} style={{ marginTop: '16px' }}>
+                    Save User
+                  </button>
+                </div>
+              )}
+
+              <table className="vivid-table" style={{ width: '100%' }}>
                 <thead>
-                  <tr style={{ borderBottom: '1px solid #334155' }}>
-                    {['Name', 'Email', 'Role', 'Manager'].map(h => (
-                      <th key={h} style={{ padding: '10px 8px', textAlign: 'left', color: '#94a3b8', fontSize: '13px' }}>{h}</th>
-                    ))}
+                  <tr>
+                    <th style={{ padding: '20px 32px' }}>User Identity</th>
+                    <th>Official Role</th>
+                    <th>Direct Manager</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {users.map(u => (
-                    <tr key={u.id} style={{ borderBottom: '1px solid #334155' }}>
-                      <td style={{ padding: '10px 8px', color: '#e2e8f0' }}>{u.name}</td>
-                      <td style={{ padding: '10px 8px', color: '#94a3b8' }}>{u.email}</td>
-                      <td style={{ padding: '10px 8px' }}>
-                        <span style={{ background: u.role === 'Manager' ? '#22c55e22' : '#6366f122', color: u.role === 'Manager' ? '#22c55e' : '#6366f1', padding: '3px 10px', borderRadius: '20px', fontSize: '12px' }}>
+                  {users.map((u, i) => (
+                    <tr key={u.id}>
+                      <td style={{ padding: '20px 32px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                          <Avatar initials={u.name.substring(0,2).toUpperCase()} color={i % 2 === 0 ? '#4f46e5' : '#059669'} />
+                          <div>
+                            <div style={{ fontWeight: 600, color: '#fff', fontSize: '15px', marginBottom: '4px' }}>{u.name}</div>
+                            <div style={{ color: 'var(--text-muted)', fontSize: '13px' }}>{u.email}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <span style={{ display: 'inline-block', padding: '4px 12px', background: 'rgba(99, 102, 241, 0.1)', color: 'var(--primary)', borderRadius: '12px', fontSize: '12px', fontWeight: 600 }}>
                           {u.role}
                         </span>
                       </td>
-                      <td style={{ padding: '10px 8px', color: '#94a3b8' }}>{u.manager || '—'}</td>
+                      <td style={{ color: 'var(--text-main)' }}>{u.manager || '—'}</td>
+                      <td>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: 'var(--success)', fontSize: '13px', fontWeight: 500 }}>
+                          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'currentColor' }}></div> Active
+                        </span>
+                      </td>
+                      <td>
+                        <button style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '20px' }}>⋮</button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </div>
-          </div>
-        )}
-
-        {/* USERS */}
-        {currentView === 'users' && (
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h1 style={{ color: '#e2e8f0', margin: 0 }}>Users & Roles</h1>
-              <button className="btn-primary" onClick={() => setShowAddUser(!showAddUser)}>
-                + Add User
-              </button>
-            </div>
-
-            {showAddUser && (
-              <div className="glass-panel animate-slide-up" style={{ padding: '24px', marginBottom: '24px', border: '1px solid var(--primary)' }}>
-                <h3 style={{ marginTop: 0, color: '#e2e8f0' }}>New User</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                  <input className="glass-input" placeholder="Full Name" value={newUser.name} onChange={e => setNewUser({ ...newUser, name: e.target.value })} />
-                  <input className="glass-input" placeholder="Email" value={newUser.email} onChange={e => setNewUser({ ...newUser, email: e.target.value })} />
-                  <select className="glass-input" value={newUser.role} onChange={e => setNewUser({ ...newUser, role: e.target.value })}>
-                    <option style={{color:'#000'}} value="Employee">Employee</option>
-                    <option style={{color:'#000'}} value="Manager">Manager</option>
-                    <option style={{color:'#000'}} value="CFO">CFO</option>
-                  </select>
-                  <select className="glass-input" value={newUser.manager} onChange={e => setNewUser({ ...newUser, manager: e.target.value })}>
-                    <option style={{color:'#000'}} value="">Select Manager</option>
-                    {Array.isArray(users) && users.filter(u => u.role === 'Manager').map(m => (
-                      <option style={{color:'#000'}} key={m.id} value={m.name}>{m.name}</option>
-                    ))}
-                  </select>
-                </div>
-                <button className="btn-success" onClick={handleAddUser} style={{ marginTop: '20px', padding: '10px 24px', fontSize: 15 }}>
-                  Save User
-                </button>
+              <div style={{ padding: '16px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-starlight)' }}>
+                 <div style={{ color: 'var(--text-muted)', fontSize: '13px' }}>Showing {users.length} of {users.length} employees</div>
+                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <button style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>&lt;</button>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 600 }}>1</div>
+                    <button style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>&gt;</button>
+                 </div>
               </div>
-            )}
-
-            <div className="glass-panel animate-slide-up" style={{ padding: '24px' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr style={{ borderBottom: '1px solid #334155' }}>
-                    {['Name', 'Email', 'Role', 'Manager', 'Actions'].map(h => (
-                      <th key={h} style={{ padding: '10px 8px', textAlign: 'left', color: '#94a3b8', fontSize: '13px' }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {users.map(u => (
-                    <tr key={u.id} style={{ borderBottom: '1px solid #334155' }}>
-                      <td style={{ padding: '10px 8px', color: '#e2e8f0' }}>{u.name}</td>
-                      <td style={{ padding: '10px 8px', color: '#94a3b8' }}>{u.email}</td>
-                      <td style={{ padding: '10px 8px' }}>
-                        <select value={u.role} onChange={e => handleRoleChange(u.id, e.target.value)}
-                          style={{ padding: '4px 8px', borderRadius: '6px', border: '1px solid #334155', background: '#0f172a', color: 'white', fontSize: '12px' }}>
-                          <option value="Employee">Employee</option>
-                          <option value="Manager">Manager</option>
-                          <option value="CFO">CFO</option>
-                        </select>
-                      </td>
-                      <td style={{ padding: '10px 8px', color: '#94a3b8' }}>{u.manager || '—'}</td>
-                      <td style={{ padding: '10px 8px' }}>
-                        <button onClick={() => handleDeleteUser(u.id)}
-                          style={{ padding: '4px 10px', background: '#ef444422', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </div>
           </div>
         )}
 
-        {/* APPROVAL RULES */}
+        {/* COMPATIBILITY VIEWS for Settings/Rules */}
+        {currentView === 'dashboard' && (
+          <div className="animate-slide-up">
+            <h1 style={{ color: '#e2e8f0', marginTop: 0 }}>Legacy Dashboard Data</h1>
+            <p style={{ color: 'var(--text-muted)' }}>Use the Users tab for the new Expressive Enterprise overview.</p>
+          </div>
+        )}
+
         {currentView === 'approval' && (
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h1 style={{ color: '#e2e8f0', margin: 0 }}>Approval Rules</h1>
-              <button className="btn-primary" onClick={() => setShowAddRule(!showAddRule)}>
-                + Add Rule
-              </button>
+          <div className="animate-slide-up">
+            <div className="surface-panel" style={{ padding: '24px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: showAddRule ? '0' : '24px', borderRadius: showAddRule ? '16px 16px 0 0' : '16px', borderBottom: showAddRule ? '1px solid var(--border-starlight)' : 'none' }}>
+               <div>
+                  <h2 style={{ margin: '0 0 4px', fontSize: '20px', fontWeight: 700 }}>Approval Rules System</h2>
+                  <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted)' }}>Define step-by-step hierarchies or parallel required approvals.</p>
+               </div>
+               <button className="btn-primary" onClick={() => setShowAddRule(!showAddRule)} style={{ padding: '10px 24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span>{showAddRule ? '✕' : '+'}</span> {showAddRule ? 'Cancel' : 'New Rule'}
+               </button>
             </div>
 
             {showAddRule && (
-              <div className="glass-panel animate-slide-up" style={{ padding: '24px', marginBottom: '24px', border: '1px solid var(--primary)' }}>
-                <h3 style={{ marginTop: 0, color: '#e2e8f0' }}>New Approval Rule</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                  <input className="glass-input" placeholder="Rule Name" value={newRule.name} onChange={e => setNewRule({ ...newRule, name: e.target.value })} />
-                  <select className="glass-input" value={newRule.type} onChange={e => setNewRule({ ...newRule, type: e.target.value })}>
-                    <option style={{color:'#000'}} value="sequential">Sequential</option>
-                    <option style={{color:'#000'}} value="percentage">Percentage</option>
-                    <option style={{color:'#000'}} value="hybrid">Hybrid</option>
-                  </select>
-                  <input className="glass-input" placeholder="Approvers (comma separated: Manager, Finance, Director)" value={newRule.approvers}
-                    onChange={e => setNewRule({ ...newRule, approvers: e.target.value })}
-                    style={{ gridColumn: '1 / -1' }} />
-                  {(newRule.type === 'percentage' || newRule.type === 'hybrid') && (
-                    <div style={{ gridColumn: '1 / -1' }}>
-                      <label style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600 }}>Min Approval Threshold: <span style={{color: 'var(--primary)'}}>{newRule.percentage}%</span></label>
-                      <input type="range" min="10" max="100" value={newRule.percentage}
-                        onChange={e => setNewRule({ ...newRule, percentage: e.target.value })}
-                        style={{ width: '100%', marginTop: '12px', accentColor: 'var(--primary)' }} />
-                    </div>
-                  )}
-                </div>
-                <button className="btn-success" onClick={handleAddRule} style={{ marginTop: '20px', padding: '10px 24px', fontSize: 15 }}>
-                  Save Rule
-                </button>
-              </div>
+               <div className="surface-panel animate-slide-up" style={{ padding: '32px', marginBottom: '24px', borderRadius: '0 0 16px 16px', background: 'rgba(99, 102, 241, 0.05)' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                     <div>
+                        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: 'var(--text-muted)', marginBottom: '8px' }}>Rule Name</label>
+                        <input className="glass-input" style={{ width: '100%' }} placeholder="e.g. Executive Travel" value={newRule.name} onChange={e => setNewRule({ ...newRule, name: e.target.value })} />
+                     </div>
+                     <div>
+                        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: 'var(--text-muted)', marginBottom: '8px' }}>Approval Type</label>
+                        <select className="glass-input" style={{ width: '100%' }} value={newRule.type} onChange={e => setNewRule({ ...newRule, type: e.target.value })}>
+                           <option style={{color:'#000'}} value="sequential">Sequential (Step 1 → Step 2)</option>
+                           <option style={{color:'#000'}} value="horizontal">Horizontal (Any % of group)</option>
+                        </select>
+                     </div>
+                     <div style={{ gridColumn: '1 / -1' }}>
+                        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: 'var(--text-muted)', marginBottom: '8px' }}>Required Approvers (comma-separated roles or exact emails)</label>
+                        <input className="glass-input" style={{ width: '100%' }} placeholder="e.g. Manager, CFO" value={newRule.approvers} onChange={e => setNewRule({ ...newRule, approvers: e.target.value })} />
+                     </div>
+                     {newRule.type === 'horizontal' && (
+                        <div>
+                           <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: 'var(--text-muted)', marginBottom: '8px' }}>Minimum Approval Percentage (%)</label>
+                           <input type="number" className="glass-input" style={{ width: '100%' }} value={newRule.percentage} onChange={e => setNewRule({ ...newRule, percentage: Number(e.target.value) })} />
+                        </div>
+                     )}
+                  </div>
+                  <button className="btn-success" onClick={handleAddRule} style={{ marginTop: '24px', padding: '12px 24px' }}>
+                     Save Approval Rule
+                  </button>
+               </div>
             )}
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {(!approvalRules || approvalRules.length === 0) && (
+                 <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)', background: 'var(--surface-midnight)', borderRadius: '16px', border: '1px solid var(--border-starlight)' }}>
+                    No rules assigned. Default system thresholds will apply.
+                 </div>
+              )}
               {(Array.isArray(approvalRules) ? approvalRules : []).map((rule, idx) => (
-                <div key={rule.id} className="glass-panel animate-slide-up" style={{ padding: '24px', animationDelay: `${idx * 0.1}s` }}>
+                <div key={rule.id} className="surface-panel animate-slide-up" style={{ padding: '24px', animationDelay: `${idx * 0.1}s` }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h3 style={{ margin: 0, color: '#e2e8f0' }}>{rule.name}</h3>
-                    <span style={{ background: '#6366f122', color: '#6366f1', padding: '4px 12px', borderRadius: '20px', fontSize: '12px' }}>{rule.type}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                       <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'rgba(99, 102, 241, 0.2)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+                         {idx + 1}
+                       </div>
+                       <h3 style={{ margin: 0, color: '#e2e8f0', fontSize: '18px' }}>{rule.name}</h3>
+                    </div>
+                    <span style={{ background: 'rgba(99, 102, 241, 0.1)', color: 'var(--primary)', border: '1px solid rgba(99, 102, 241, 0.2)', padding: '6px 14px', borderRadius: 'var(--radius-pill)', fontSize: '12px', fontWeight: 600, textTransform: 'capitalize' }}>
+                       {rule.type} {rule.type === 'horizontal' && `(${rule.percentage}%)`}
+                    </span>
                   </div>
-                  <div style={{ display: 'flex', gap: '8px', marginTop: '12px', flexWrap: 'wrap' }}>
-                    {rule.sequence.map((step, i) => (
-                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ background: '#0f172a', padding: '6px 14px', borderRadius: '20px', fontSize: '13px', color: '#e2e8f0', border: '1px solid #334155' }}>
-                          Step {i + 1}: {step}
-                        </span>
-                        {i < rule.sequence.length - 1 && <span style={{ color: '#6366f1' }}>→</span>}
-                      </div>
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '20px', flexWrap: 'wrap', alignItems: 'center', paddingLeft: '42px' }}>
+                    {rule.sequence && rule.sequence.map((step, i) => (
+                      <React.Fragment key={i}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ background: 'var(--bg-deep-space)', padding: '8px 16px', borderRadius: 'var(--radius-pill)', fontSize: '13px', color: '#e2e8f0', border: '1px solid var(--border-starlight)', fontWeight: 600 }}>
+                            {rule.type === 'sequential' && <span style={{ color: 'var(--text-muted)', marginRight: '6px' }}>Step {i + 1}:</span>}
+                            {step}
+                          </span>
+                        </div>
+                        {i < rule.sequence.length - 1 && (
+                            <span style={{ color: 'var(--text-muted)', fontWeight: 'bold', margin: '0 4px', fontSize: '16px' }}>
+                               {rule.type === 'sequential' ? '→' : '+'}
+                            </span>
+                        )}
+                      </React.Fragment>
                     ))}
                   </div>
-                  {rule.percentage && rule.type !== 'sequential' && (
-                    <div style={{ marginTop: '8px', color: '#94a3b8', fontSize: '13px' }}>Min approval: {rule.percentage}%</div>
-                  )}
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* COMPANY SETTINGS */}
         {currentView === 'company' && (
           <div className="animate-slide-up">
             <h1 style={{ color: '#e2e8f0', marginTop: 0 }}>Company Settings</h1>
-            <div className="glass-panel" style={{ padding: '32px', maxWidth: '500px' }}>
+            <div className="surface-panel" style={{ padding: '32px', maxWidth: '500px' }}>
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}>Company Name</label>
                 <input className="glass-input" style={{ width: '100%' }} value={company.name} onChange={e => setCompany({ ...company, name: e.target.value })} />

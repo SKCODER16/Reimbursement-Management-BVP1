@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ManagerTable from './components/Manager/ManagerTable';
+import Employee from './components/Employee/Employee.js';
 
 function App() {
   // Mock data representing what Person B (Employee) will eventually send you
@@ -43,10 +44,26 @@ function App() {
     }));
   };
 
+  const [expenses, setExpenses] = useState([]);
+
+  const handleSubmitExpense = (expense) => {
+    setExpenses([...expenses, expense]);
+  };
+
   return (
     <div style={{ backgroundColor: '#121212', minHeight: '100vh', color: 'white', padding: '2rem' }}>
       <h1>Reimbursement Management</h1>
-      {/* Passing props to your ManagerTable */}
+      
+      {/* Employee Section */}
+      <Employee
+        expenses={expenses}
+        onSubmitExpense={handleSubmitExpense}
+        employeeName="Sarah"
+      />
+
+      <hr style={{ margin: '2rem 0', borderColor: '#333' }} />
+
+      {/* Manager Section */}
       <ManagerTable
         expenses={dummyExpenses}
         companyCurrency="INR"

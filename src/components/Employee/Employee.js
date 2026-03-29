@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { useApp } from '../context/AppContext'; //
 
-const Employee = ({ expenses = [], onSubmitExpense, employeeName = "Sarah" }) => {
+const Employee = ({ expenses = [], onSubmitExpense, employeeName }) => {
+  const { currentUser } = useApp(); //
+
   const [form, setForm] = useState({
     description: '',
     amount: '',
@@ -33,7 +36,7 @@ const Employee = ({ expenses = [], onSubmitExpense, employeeName = "Sarah" }) =>
       remarks: form.remarks,
       status: 'pending',
       baseAmount: parseFloat(form.amount),
-      employee: employeeName
+      employeeName: employeeName || currentUser?.name //
     };
     if (onSubmitExpense) onSubmitExpense(newExpense);
     setForm({ description: '', amount: '', currency: 'USD', category: '', date: '', paidBy: '', remarks: '' });
@@ -50,7 +53,9 @@ const Employee = ({ expenses = [], onSubmitExpense, employeeName = "Sarah" }) =>
     <div style={{ fontFamily: 'Segoe UI, sans-serif', maxWidth: '900px', margin: '0 auto', padding: '20px', background: '#0f172a', minHeight: '100vh', color: 'white' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
         <h1 style={{ color: '#6366f1', fontSize: '24px', margin: 0 }}>💼 Employee Portal</h1>
-        <span style={{ background: '#1e293b', padding: '8px 16px', borderRadius: '20px', fontSize: '14px' }}>👤 {employeeName}</span>
+        {/* DYNAMIC ROLE BADGE: Replaces the hardcoded "Admin" label */}
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+        </div>
       </div>
 
       <div style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
@@ -65,7 +70,7 @@ const Employee = ({ expenses = [], onSubmitExpense, employeeName = "Sarah" }) =>
       </div>
 
       {activeTab === 'submit' && (
-        <div style={{ background: '#1e293b', borderRadius: '16px', padding: '28px' }}>
+        <div style={{ background: '#1e293b', borderRadius: '16px', padding: '28px', border: '1px solid #334155' }}>
           <h2 style={{ marginTop: 0, color: '#e2e8f0' }}>New Expense Claim</h2>
           <form onSubmit={handleSubmit}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
@@ -118,7 +123,7 @@ const Employee = ({ expenses = [], onSubmitExpense, employeeName = "Sarah" }) =>
       )}
 
       {activeTab === 'history' && (
-        <div style={{ background: '#1e293b', borderRadius: '16px', padding: '28px' }}>
+        <div style={{ background: '#1e293b', borderRadius: '16px', padding: '28px', border: '1px solid #334155' }}>
           <h2 style={{ marginTop: 0, color: '#e2e8f0' }}>My Expense History</h2>
           {expenses.length === 0 ? (
             <p style={{ color: '#94a3b8', textAlign: 'center', padding: '40px' }}>No expenses submitted yet!</p>

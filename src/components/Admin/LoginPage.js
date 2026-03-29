@@ -32,23 +32,42 @@ export default function LoginPage({ onNavigate }) {
   };
 
   const handleSubmit = () => {
-    if (!form.email || !form.password) { setError("Please fill all fields"); return; }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // 1. Realistic Validation
+    if (!emailRegex.test(form.email)) {
+      setError("Please enter a valid work email.");
+      return;
+    }
+
+    if (form.password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+
+    // 2. Prevent "123" dummy login
+    if (isLogin && (form.email === "123" || form.password === "123")) {
+      setError("Invalid credentials.");
+      return;
+    }
+
+    // 3. DEFINE the missing variables here to fix the Error
     const company = {
       companyName: form.companyName || "My Company",
       country: form.country,
       currency: form.currency,
       currencySymbol: form.currencySymbol
     };
+
     const user = {
       id: "user_" + Date.now(),
-      name: form.name || "Admin",
+      name: form.name || form.email.split('@')[0], // Uses the part before the @ as a name
       email: form.email,
-      password: form.password,
       role: form.role
     };
-    if (form.role === "admin") onNavigate("admin-dashboard", user, company);
-    else if (form.role === "manager") onNavigate("manager-dashboard", user, company);
-    else onNavigate("employee-dashboard", user, company);
+
+    // 4. Proceed with login using the newly defined variables
+    onNavigate(form.role + "-dashboard", user, company);
   };
 
   return (

@@ -12,7 +12,6 @@ function AppInner() {
     expenses, submitExpense, processApproval
   } = useApp();
 
-  // If no user is logged in, show the teammate's new Login Page
   if (!currentUser) {
     return (
       <LoginPage
@@ -26,21 +25,56 @@ function AppInner() {
 
   return (
     <div style={{ background: '#0f172a', minHeight: '100vh', color: 'white' }}>
-      <nav style={{ background: '#1e293b', padding: '10px', display: 'flex', gap: '10px', justifyContent: 'center' }}>
-        <span style={{ marginRight: 'auto', paddingLeft: '20px', color: '#6366f1' }}>
-          🏢 {company?.companyName} ({company?.currencySymbol})
+      <nav style={{ background: '#1e293b', padding: '10px', display: 'flex', gap: '10px', justifyContent: 'center', alignItems: 'center' }}>
+        <span style={{ marginRight: 'auto', paddingLeft: '20px', color: '#6366f1', fontWeight: 'bold' }}>
+          🏢 {company?.companyName} ({company?.currencySymbol || company?.currency})
         </span>
-        {/* Role Switcher for Demo Purposes */}
-        {['employee', 'manager', 'admin'].map(role => (
-          <button key={role} onClick={() => setCurrentUser({ ...currentUser, role })}
-            style={{
-              padding: '8px 20px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 'bold',
-              background: currentUser.role === role ? '#6366f1' : '#334155', color: 'white', margin: '0 5px'
-            }}>
-            {role.toUpperCase()}
-          </button>
-        ))}
-        <button onClick={() => setCurrentUser(null)} style={{ color: '#ef4444', marginLeft: '10px' }}>Logout</button>
+
+        {/* Updated Role-Based Navigation */}
+        {['employee', 'manager', 'admin'].map(role => {
+          // Logic: 
+          // 1. Admins can see everything to manage/demo the app.
+          // 2. Other users only see the role they logged in as.
+          if (currentUser.role !== 'admin' && role !== currentUser.role) {
+            return null;
+          }
+
+          return (
+            <button
+              key={role}
+              onClick={() => setCurrentUser({ ...currentUser, role })}
+              style={{
+                padding: '8px 20px',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                background: currentUser.role === role ? '#6366f1' : '#334155',
+                color: 'white',
+                margin: '0 5px',
+                transition: '0.3s'
+              }}
+            >
+              {role.toUpperCase()}
+            </button>
+          );
+        })}
+
+        <button
+          onClick={() => setCurrentUser(null)}
+          style={{
+            color: '#ef4444',
+            background: 'transparent',
+            border: '1px solid #ef4444',
+            padding: '7px 15px',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            marginLeft: '10px',
+            fontWeight: 'bold'
+          }}
+        >
+          Logout
+        </button>
       </nav>
 
       <div style={{ padding: '20px' }}>
@@ -54,6 +88,7 @@ function AppInner() {
 
         {currentUser.role === 'manager' && (
           <ManagerTable
+            // These props are kept for compatibility with your existing ManagerTable
             expenses={expenses.filter(e => e.status === 'pending')}
             companyCurrency={company?.currency}
             onApprove={(id, comment) => processApproval(id, 'approved', comment)}
@@ -67,7 +102,6 @@ function AppInner() {
   );
 }
 
-// Wrap the entire App in the Provider
 export default function App() {
   return (
     <AppProvider>

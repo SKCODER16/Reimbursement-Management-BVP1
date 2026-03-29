@@ -37,7 +37,7 @@ export default function LoginPage({ onNavigate }) {
     if (form.password.length < 6) return setError("Password must be at least 6 characters.");
 
     const company = {
-      companyName: form.companyName || "Expressive Enterprise",
+      companyName: form.companyName || "Reimburse IQ",
       country: form.country || "USA",
       currency: form.currency || "USD",
       currencySymbol: form.currencySymbol || "$"
@@ -227,7 +227,7 @@ export default function LoginPage({ onNavigate }) {
       <div className="surface-panel animate-slide-up" style={{ position: 'absolute', bottom: '40px', right: '40px', width: '300px', padding: '24px', borderRadius: '24px', zIndex: 2, display: 'none' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
           <div style={{ width: '24px', height: '24px', background: 'var(--success)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '12px' }}>✓</div>
-          <span style={{ fontWeight: 700, color: '#fff', fontSize: '14px' }}>Expressive Enterprise</span>
+          <span style={{ fontWeight: 700, color: '#fff', fontSize: '14px' }}>Reimburse IQ</span>
         </div>
         <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.6', margin: '0 0 20px' }}>
           "ReimburseIQ has transformed our financial workflow. The Neon Luminary aesthetic isn't just beautiful—it's incredibly efficient."

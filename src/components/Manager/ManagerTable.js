@@ -2,17 +2,32 @@ import React from 'react';
 import { useApp } from '../context/AppContext';
 
 const ManagerTable = () => {
-    const { expenses, processApproval, company } = useApp();
+    const { expenses, processApproval, company, currentUser } = useApp();
 
-    // 1. Logic for PENDING items (Step 1)
-    const pendingExpenses = expenses.filter(exp =>
-        exp.status === "pending" &&
-        exp.approvalSteps[exp.currentStep]?.role === "Manager"
-    );
+    // 1. Logic for PENDING items
+    const pendingExpenses = expenses.filter(exp => {
+        if (exp.status !== "pending") return false;
+        
+        const currentStepObj = exp.approvalSteps[exp.currentStep];
+        if (!currentStepObj) return false;
 
-    // 2. Logic for HISTORY items (Step 2 - MUST be inside the function)
+        // Admins and CFOs can see and approve anything
+        if (currentUser?.role === 'admin' || currentUser?.role === 'CFO') return true;
+
+        // If it's specifically assigned to this manager by name
+        if (currentStepObj.specificApprover) {
+            return currentStepObj.specificApprover === currentUser?.name;
+        }
+        
+        return currentStepObj.role === "Manager" || currentStepObj.role === currentUser?.role;
+    });
+
+    // 2. Logic for HISTORY items
     const processedExpenses = expenses.filter(exp =>
-        exp.approvalSteps.some(step => step.role === "Manager" && step.status !== "pending")
+        exp.approvalSteps.some(step => 
+            (step.specificApprover === currentUser?.name || step.role === currentUser?.role || currentUser?.role === 'admin' || currentUser?.role === 'CFO') && 
+            step.status !== "pending"
+        )
     );
 
     return (
@@ -35,7 +50,12 @@ const ManagerTable = () => {
                         <tr key={exp.id} style={{ borderBottom: '1px solid #334155' }}>
                             <td style={{ padding: '12px' }}>{exp.employeeName || "Sarah"}</td>
                             <td style={{ padding: '12px' }}>
-                                {company?.currencySymbol} {exp.amount}
+                                {company?.currencySymbol} {exp.baseAmount || exp.amount}
+                                {exp.currency !== company?.currency && (
+                                    <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+                                        (Orig: {exp.amount} {exp.currency})
+                                    </div>
+                                )}
                             </td>
                             <td style={{ padding: '12px' }}>{exp.category}</td>
                             <td style={{ padding: '12px' }}>
@@ -82,7 +102,14 @@ const ManagerTable = () => {
                         {processedExpenses.map(exp => (
                             <tr key={exp.id} style={{ borderBottom: '1px solid #334155' }}>
                                 <td style={{ padding: '15px' }}>{exp.employeeName || "Sarah"}</td>
-                                <td style={{ padding: '15px' }}>{company?.currencySymbol}{exp.amount}</td>
+                                <td style={{ padding: '15px' }}>
+                                    {company?.currencySymbol} {exp.baseAmount || exp.amount}
+                                    {exp.currency !== company?.currency && (
+                                        <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '4px' }}>
+                                            (Orig: {exp.amount} {exp.currency})
+                                        </div>
+                                    )}
+                                </td>
                                 <td style={{ padding: '15px', color: exp.approvalSteps.find(s => s.role === "Manager")?.status === 'approved' ? '#22c55e' : '#ef4444', fontWeight: 'bold' }}>
                                     {exp.approvalSteps.find(s => s.role === "Manager")?.status.toUpperCase()}
                                 </td>

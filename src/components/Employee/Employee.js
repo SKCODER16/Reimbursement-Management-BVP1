@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { useApp } from '../context/AppContext'; //
+import { useApp } from '../context/AppContext';
+import { getConvertedAmount } from '../../services/currencyService';
+import ReceiptScanner from './ReceiptScanner';
 
 const Employee = ({ expenses = [], onSubmitExpense, employeeName }) => {
-  const { currentUser } = useApp(); //
+  const { currentUser, company } = useApp();
 
   const [form, setForm] = useState({
     description: '',
@@ -11,7 +13,8 @@ const Employee = ({ expenses = [], onSubmitExpense, employeeName }) => {
     category: '',
     date: '',
     paidBy: '',
-    remarks: ''
+    remarks: '',
+    receiptImage: ''
   });
 
   const [activeTab, setActiveTab] = useState('submit');
@@ -23,8 +26,12 @@ const Employee = ({ expenses = [], onSubmitExpense, employeeName }) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    const baseAmountStr = await getConvertedAmount(form.amount, form.currency, company?.currency || 'USD');
+    const baseAmountStrFixed = parseFloat(baseAmountStr);
+
     const newExpense = {
       id: Date.now(),
       description: form.description,
@@ -34,13 +41,25 @@ const Employee = ({ expenses = [], onSubmitExpense, employeeName }) => {
       date: form.date,
       paidBy: form.paidBy,
       remarks: form.remarks,
+      receiptImage: form.receiptImage,
       status: 'pending',
-      baseAmount: parseFloat(form.amount),
+      baseAmount: baseAmountStrFixed,
       employeeName: employeeName || currentUser?.name //
     };
     if (onSubmitExpense) onSubmitExpense(newExpense);
-    setForm({ description: '', amount: '', currency: 'USD', category: '', date: '', paidBy: '', remarks: '' });
+    setForm({ description: '', amount: '', currency: 'USD', category: '', date: '', paidBy: '', remarks: '', receiptImage: '' });
     setActiveTab('history');
+  };
+
+  const handleScanComplete = (extractedData) => {
+    setForm(prev => ({
+      ...prev,
+      amount: extractedData.amount || prev.amount,
+      date: extractedData.date || prev.date,
+      description: extractedData.description || prev.description,
+      category: extractedData.category || prev.category,
+      receiptImage: extractedData.receiptImage
+    }));
   };
 
   const getStatusStyle = (status) => {
@@ -72,6 +91,9 @@ const Employee = ({ expenses = [], onSubmitExpense, employeeName }) => {
       {activeTab === 'submit' && (
         <div style={{ background: '#1e293b', borderRadius: '16px', padding: '28px', border: '1px solid #334155' }}>
           <h2 style={{ marginTop: 0, color: '#e2e8f0' }}>New Expense Claim</h2>
+          
+          <ReceiptScanner onScanComplete={handleScanComplete} />
+
           <form onSubmit={handleSubmit}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
               <div>

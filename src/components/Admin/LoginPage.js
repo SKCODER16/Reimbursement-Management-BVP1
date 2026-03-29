@@ -103,10 +103,10 @@ export default function LoginPage({ onNavigate }) {
 
             <label style={s.label}>ROLE</label>
             <div style={s.roleRow}>
-              {["admin", "manager", "employee"].map(r => (
+              {["admin", "CFO", "manager", "employee"].map(r => (
                 <button key={r} style={{ ...s.roleBtn, ...(form.role === r ? s.roleBtnActive : {}) }}
                   onClick={() => setForm({ ...form, role: r })}>
-                  {r === "admin" ? "👑 Admin" : r === "manager" ? "💼 Manager" : "👤 Employee"}
+                  {r === "admin" ? "👑 Admin" : r === "CFO" ? "🏦 CFO" : r === "manager" ? "💼 Manager" : "👤 Employee"}
                 </button>
               ))}
             </div>

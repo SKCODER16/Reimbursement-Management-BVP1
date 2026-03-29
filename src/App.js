@@ -31,7 +31,7 @@ function AppInner() {
         </span>
 
         {/* Updated Role-Based Navigation */}
-        {['employee', 'manager', 'admin'].map(role => {
+        {['employee', 'manager', 'CFO', 'admin'].map(role => {
           // Logic: 
           // 1. Admins can see everything to manage/demo the app.
           // 2. Other users only see the role they logged in as.
@@ -86,7 +86,7 @@ function AppInner() {
           />
         )}
 
-        {currentUser.role === 'manager' && (
+        {(currentUser.role === 'manager' || currentUser.role === 'CFO') && (
           <ManagerTable
             // These props are kept for compatibility with your existing ManagerTable
             expenses={expenses.filter(e => e.status === 'pending')}

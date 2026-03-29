@@ -1,18 +1,11 @@
 import React, { useState } from 'react';
+import { useApp } from '../context/AppContext';
 
 const Admin = ({ onSetupComplete }) => {
   const [currentView, setCurrentView] = useState('dashboard');
-  const [company, setCompany] = useState({ name: 'My Company', currency: 'INR', country: 'India' });
   
-  const [users, setUsers] = useState([
-    { id: 1, name: 'Sarah', email: 'sarah@company.com', role: 'Employee', manager: 'John' },
-    { id: 2, name: 'John', email: 'john@company.com', role: 'Manager', manager: '' },
-    { id: 3, name: 'Mitchell', email: 'mitchell@company.com', role: 'Manager', manager: '' },
-  ]);
+  const { company, setCompany, users, setUsers, approvalRulesArray: approvalRules, setApprovalRulesArray: setApprovalRules } = useApp();
 
-  const [approvalRules, setApprovalRules] = useState([
-    { id: 1, name: 'Default Rule', sequence: ['Manager', 'Finance', 'Director'], type: 'sequential', percentage: 100 }
-  ]);
 
   const [newUser, setNewUser] = useState({ name: '', email: '', role: 'Employee', manager: '' });
   const [newRule, setNewRule] = useState({ name: '', type: 'sequential', percentage: 60, approvers: '' });
@@ -150,6 +143,7 @@ const Admin = ({ onSetupComplete }) => {
                     style={{ padding: '10px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: 'white' }}>
                     <option value="Employee">Employee</option>
                     <option value="Manager">Manager</option>
+                    <option value="CFO">CFO</option>
                   </select>
                   <select value={newUser.manager} onChange={e => setNewUser({ ...newUser, manager: e.target.value })}
                     style={{ padding: '10px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: 'white' }}>
@@ -185,6 +179,7 @@ const Admin = ({ onSetupComplete }) => {
                           style={{ padding: '4px 8px', borderRadius: '6px', border: '1px solid #334155', background: '#0f172a', color: 'white', fontSize: '12px' }}>
                           <option value="Employee">Employee</option>
                           <option value="Manager">Manager</option>
+                          <option value="CFO">CFO</option>
                         </select>
                       </td>
                       <td style={{ padding: '10px 8px', color: '#94a3b8' }}>{u.manager || '—'}</td>

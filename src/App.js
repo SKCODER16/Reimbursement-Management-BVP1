@@ -44,7 +44,7 @@ function App() {
   };
 
   return (
-    <div style={{ backgroundColor: '#121212', minHeight: '100vh', color: 'white' }}>
+    <div style={{ backgroundColor: '#121212', minHeight: '100vh', color: 'white', padding: '2rem' }}>
       <h1>Reimbursement Management</h1>
       {/* Passing props to your ManagerTable */}
       <ManagerTable

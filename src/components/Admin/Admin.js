@@ -81,9 +81,9 @@ const Admin = ({ onSetupComplete }) => {
             <h1 style={{ color: '#e2e8f0', marginTop: 0 }}>Dashboard</h1>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '30px' }}>
               {[
-                { label: 'Total Employees', value: users.filter(u => u.role === 'Employee').length, color: '#6366f1' },
-                { label: 'Total Managers', value: users.filter(u => u.role === 'Manager').length, color: '#22c55e' },
-                { label: 'Approval Rules', value: approvalRules.length, color: '#f59e0b' },
+                { label: 'Total Employees', value: Array.isArray(users) ? users.filter(u => u.role === 'Employee').length : 0, color: '#6366f1' },
+                { label: 'Total Managers', value: Array.isArray(users) ? users.filter(u => u.role === 'Manager').length : 0, color: '#22c55e' },
+                { label: 'Approval Rules', value: Array.isArray(approvalRules) ? approvalRules.length : 0, color: '#f59e0b' },
               ].map((stat, i) => (
                 <div key={i} style={{ background: '#1e293b', borderRadius: '12px', padding: '20px', borderTop: `3px solid ${stat.color}` }}>
                   <div style={{ fontSize: '32px', fontWeight: 'bold', color: stat.color }}>{stat.value}</div>
@@ -240,7 +240,7 @@ const Admin = ({ onSetupComplete }) => {
             )}
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {approvalRules.map(rule => (
+              {(Array.isArray(approvalRules) ? approvalRules : []).map(rule => (
                 <div key={rule.id} style={{ background: '#1e293b', borderRadius: '12px', padding: '20px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <h3 style={{ margin: 0, color: '#e2e8f0' }}>{rule.name}</h3>

@@ -36,7 +36,7 @@ export function AppProvider({ children }) {
   const [expenses, setExpenses] = useLocalStorage("app_expenses", []);
   
   // Expose the array-based rules for the Admin panel. We use the most recently added rule as active.
-  const [approvalRulesArray, setApprovalRulesArray] = useLocalStorage("app_approvalRules", [
+  const [approvalRulesArray, setApprovalRulesArray] = useLocalStorage("app_approvalRules_v2", [
     { id: 1, name: 'Default Rule', sequence: ['Manager', 'Finance', 'Director'], type: 'sequential', percentage: 100, approvers: 'Manager, Finance, Director' }
   ]);
 
